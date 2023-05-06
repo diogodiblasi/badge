@@ -1,10 +1,29 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
-import React from "react";
-import { Box, Heading, AspectRatio, Image, Text, Stack, NativeBaseProvider,  Button } from "native-base";
+import { Box, Heading, AspectRatio, Text, Image, Stack, NativeBaseProvider,  Button } from "native-base";
+import { API } from './http/Http';
+import { useEffect, useState } from 'react';
+import { Badge } from './model/badge';
 
+const GetBadge = () => {
+  const [badge, setBadge] = useState < Badge > (new Badge())
+  
+  
 
-const Badge = () => {
+  useEffect(() => {
+   
+      
+      API.get(`Badge/5`)
+      .then((badge)=>{
+        console.log(badge.data)
+        setBadge(badge.data)
+
+      })
+      .catch((error)=>{
+        console.log(error)
+      })
+
+  })
 
 
   return <Box alignItems="center" bottom="20">
@@ -20,6 +39,7 @@ const Badge = () => {
     }}>
         <Stack>
           <Text bottom="-45" margin="83">
+            
           <Button.Group isAttached colorScheme="blue" mx={{
               
             }} size="sm">
@@ -33,19 +53,19 @@ const Badge = () => {
           <AspectRatio  p="100" w="70%" ratio={18 / 9}>
             
             <Image  source={
-            require('./assets/java.jpg')
-          } alt="image" />
+            {uri: `data:image/png;base64,${badge.imagem}`}
+          } alt="imagem" />
           </AspectRatio>
           
         </Box>
         <Stack p="7" space={3}>
           <Stack space={2}>
-            <Heading bottom ="25" size="xl" ml="-1">
-              JAVA
+            <Heading bottom ="23" size="md" ml="-1">
+            {badge.descricao}
             </Heading>
           </Stack>
           <Text fontWeight="700" bottom="25">
-            Java é uma linguagem de programação orientada a objetos
+           {badge.badgeNivel?.descricao}
           </Text>
           <Stack>
             <Text fontWeight="700" w="45%" ml="160">
@@ -73,7 +93,7 @@ export default function App() {
   return (
     <NativeBaseProvider>
     <View style={styles.container}>
-        {Badge()}
+        {GetBadge()}
         
        <StatusBar style="auto" />
     </View>
@@ -85,8 +105,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 0,
-    padding:0,
+    
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
